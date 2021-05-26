@@ -161,6 +161,45 @@ grid_integrated_24hpi_cofac <- cowplot::plot_grid(plotlist = umap_integrated_24h
 
 grid_integrated_24hpi_cofac
 
+# UMAPs of ISGs
+cols_single <- brewer.pal(9, "YlOrRd")[4:8] #rev(brewer.pal(9, 'GnBU')) reverses order
+newcol_single <- colorRampPalette(cols_single) #extrapolate inbetween colors
+ncols <- 100 #how many new colors?
+cols2_single <- newcol_single(ncols) #apply the function to get 100 colours
+col.sc.isg <- scale_color_gradientn(colours = cols2_single, 
+                                      limits=c(0.0001, 6))
+
+
+#VlnPlot(integrated_6hpi, features = "ISG15")
+                                      
+
+umap_integrated_6hpi_isg <- FeaturePlot(integrated_6hpi, 
+                                         features = c("IFIT1", "MX1", "IFITM3",
+                                                      "ISG15", "STAT1", "IFNB1"),
+                                         split.by = "moi",
+                                         label = FALSE, combine = FALSE, 
+                                         pt.size = 0.5)
+
+for(i in 1:length(umap_integrated_6hpi_isg)) {
+  umap_integrated_6hpi_isg[[i]] <- umap_integrated_6hpi_isg[[i]] + 
+    NoAxes() + labs(title ="") + 
+    theme(legend.position = "none") + 
+    theme(panel.border =element_blank()) + 
+    theme(plot.background = element_rect(fill = "transparent", color = NA)) +
+    col.sc.isg
+} 
+
+
+
+grid_integrated_6hpi_isg <- cowplot::plot_grid(plotlist = umap_integrated_6hpi_isg,
+                                                  ncol = 6)
+
+#grid_integrated_6hpi_cofac
+
+ggsave("./UMAPs/integrated_6hpi_isg.png",
+       plot = grid_integrated_6hpi_isg,
+       width = 30, height = 30, units = "cm", dpi = 300)
+
 
 
 ########### VIOLIN PLOTS ##########
