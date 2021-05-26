@@ -12,7 +12,7 @@ library(RColorBrewer)
 library(rcartocolor)
 
 
-########## Preprocessing 
+########## Preprocessing #################################################
 # performed similarily for all samples
 
 # "mock_24" is the example here, can be replaced by
@@ -88,12 +88,12 @@ mock_24sel[["percent.chikv"]] <- PercentageFeatureSet(mock_24sel,
 mock_24sel <-subset(mock_24sel, 
                     subset= percent.chikv <= 0)
 
-#check the percentage of CHIKV reads (should be 0)
+#check the percentage of CHIKV reads (should be 0 for Mock)
 percent_chikv <- VlnPlot(mock_24sel, features = "percent.chikv") +
   theme(legend.position = "none")
 percent_chikv
 
-#m SCTtransform data and regress out cell cycle scores
+#m SCTtransform data and regress out cell cycle scores ######################################
 mock_24sel <- SCTransform(mock_24sel, 
                           vars.to.regress = c("S.Score", "G2M.Score"),
                           verbose = FALSE)
