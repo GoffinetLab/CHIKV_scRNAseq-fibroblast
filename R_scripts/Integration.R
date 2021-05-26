@@ -77,7 +77,7 @@ DefaultAssay(rep4_mock_6) <- "SCT"
 DefaultAssay(rep4_moi0_1_6) <- "SCT"
 DefaultAssay(rep4_moi0_01_6) <- "SCT"
 
-###### Integration ######
+###### Integration ################################################################
 
 
 # Set RAM capacity to maximum
@@ -151,7 +151,7 @@ integrated_24hpi <- IntegrateData(anchorset = rep2_4_24hpi.anchors,
 saveRDS(integrated_24hpi, file = "./RDS_integrated/rep2_4_integrated_24hpi.RDS")
 
 
-###### Clustering and visualization ####
+###### Clustering and visualization #########################################################
 #### REPEAT FOR 24 hpi ######
 
 # Run the standard workflow for visualization and clustering
@@ -168,7 +168,7 @@ integrated_6hpi_clus <- FindNeighbors(integrated_6hpi_clus,
                                       reduction = "pca", dims = 1:20)
 
 integrated_6hpi_clus <- FindClusters(integrated_6hpi_clus, 
-                                     resolution = 0.8)
+                                     resolution = 0.5) # Resolution for 24 hpi: 0.8
 
 # UMAP colored by infection status
 Idents(integrated_6hpi_clus) <- "infection"
