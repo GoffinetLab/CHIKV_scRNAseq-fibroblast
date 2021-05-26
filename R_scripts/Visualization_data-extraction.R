@@ -346,10 +346,10 @@ write.csv2(genelist_all_ifnsig24, file = "Data output/genelist_all_ifnsig24.csv"
 integrated_24hpi[["percent.chikv"]] <- PercentageFeatureSet(integrated_24hpi, 
                                                             pattern = "^MT-")
 
-df <- FetchData(integrated_24hpi, vars = c("percent.chikv", "seurat_clusters"))
+df <- FetchData(integrated_24hpi, vars = c("percent.chikv", "seurat_clusters", "moi"))
 df_sum <- df %>%
-  group_by(seurat_clusters) %>%
+  group_by(moi, seurat_clusters) %>%
   summarise(mean_perc_mt = mean(percent.chikv), sd_perc_mt = sd(percent.chikv))
 df_sum
 
-write.csv2(df_sum, file = "Data output/percentchikv_24hpi.csv")
+write.csv2(df_sum, file = "Data output/percentchikv_percluster_24hpi.csv")
