@@ -163,7 +163,7 @@ grid_integrated_24hpi_cofac
 
 
 
-########### VIOLIN PLOTS #########
+########### VIOLIN PLOTS ##########
 
 # reorder
 integrated_24hpi$moi <- factor(x = integrated_24hpi$moi,
