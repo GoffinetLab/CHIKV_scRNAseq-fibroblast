@@ -173,6 +173,20 @@ integrated_24hpi$chikrnalvl <- factor(x = integrated_24hpi$chikrnalvl,
                                       levels = c('mock', "no_chikv", 
                                                  "low_chikv", "high_chikv"))
 
+#VlnPlot for CHIKV expression level with cutoff indication
+Idents(integrated_24hpi) <- "moi"
+
+VlnPlot_chikv_24 <- VlnPlot(integrated_24hpi, features = "CHIKV-sp", 
+        #split.by = "chikrnalvl",
+        cols = c("#000000", "#000000", "#000000", "#000000", "#000000" ),
+        pt.size = 0) + geom_hline(yintercept = c(2, 3.5, 4, 4.5)) #6 hpi: 1.5, 2.5, 3, 4
+
+VlnPlot_chikv_24
+
+ggsave("./VlnPlots/Vln_chikv_24.svg", 
+       plot = VlnPlot_chikv_24, 
+       width = 15, height = 15, units = "cm", dpi = 300)
+
 #VlnPlot for IFN module score by MOI
 Idents(integrated_24hpi) <- "moi"
 
