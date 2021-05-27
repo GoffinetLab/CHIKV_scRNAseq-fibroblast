@@ -254,9 +254,51 @@ chikv_ifnsig <- FetchData(integrated_24hpi,
 write.csv2(chikv_ifnsig, file = "chikv_ifnsig_all.csv")
 
 
+## Extraction of data for volcano plots
+
+# DEG testing
+# no_chikv vs c(low_chikv, high_chikv)
+Idents(integrated_24hpi) <- "chikrnalvl"
+no_all_chikv <- FindMarkers(integrated_24hpi,
+                            ident.1 = c("low_chikv", "high_chikv"),
+                            ident.2 = "no_chikv")
+
+head(no_all_chikv)
+write.csv2(no_all_chikv, file = "Data output/no_vs_all_chikv24.csv")
+
+
+# no_chikv vs low_chikv
+no_low_chikv <- FindMarkers(integrated_24hpi,
+                            ident.1 = "low_chikv",
+                            ident.2 = "no_chikv")
+
+head(no_low_chikv)
+write.csv2(no_low_chikv, file = "Data output/no_vs_low_chikv24.csv")
+
+# no_chikv vs high_chikv
+no_high_chikv <- FindMarkers(integrated_24hpi,
+                            ident.1 = "high_chikv",
+                            ident.2 = "no_chikv")
+
+head(no_high_chikv)
+write.csv2(no_high_chikv, file = "Data output/no_vs_high_chikv24.csv")
+
+# low_chikv vs high_chikv
+low_high_chikv <- FindMarkers(integrated_24hpi,
+                            ident.1 = "high_chikv",
+                            ident.2 = "low_chikv")
+
+head(low_high_chikv)
+write.csv2(low_high_chikv, file = "Data output/low_vs_high_chikv24.csv")
+
+
+
+## Extraction of data for heatmaps
 # Fetch average expression data for heatmaps
-genelist_all <- FetchData(integrated_24hpi, 
-                          vars= c("chikrnalvl", "CHIKV-sp", "ISG15", "IFI6",
+
+# ISGs
+genelist_bins_24 <- FetchData(integrated_24hpi, 
+                          vars= c("chikv_bins", "CHIKV-sp", "ISG15", "IFI6",
                                   "MX1", "MX2", "IFIT1", "IFIT2", "IFIT3",
                                   "IFIT5", "OASL", "IFITM1", "IFITM2", "IFITM3",
                                   "CGAS","CAD", "IRF1", "IRF2", "IRF3",
@@ -264,11 +306,8 @@ genelist_all <- FetchData(integrated_24hpi,
                                   "STAT6", "IFNB1", "IFNL1", "IFNL2", "IFNL3", 
                                   "TNF", "IL6", "IL1B"))
 
-write.csv2(genelist_all, file = "genelist_ISG_24_not_averaged.csv")
-
-
-genelist_avg <- genelist_all %>% 
-  group_by(chikrnalvl) %>%
+genelist_avg_bins24 <- genelist_bins_24 %>% 
+  group_by(chikv_bins) %>%
   summarise(CHIKV = mean(`CHIKV-sp`), ISG15 = mean(ISG15),
             IFI6 = mean(IFI6), MX1 = mean(MX1),
             MX2 = mean(MX2), IFIT1 = mean(IFIT1),
@@ -287,21 +326,20 @@ genelist_avg <- genelist_all %>%
             IL1B = mean(IL1B))
 
 
-write.csv2(genelist_avg, file = "genelist_ISG_24.csv")
+write.csv2(genelist_avg_bins24, file = "Data output/genelist_ISG_perbin24.csv")
 
-
-genelist_all_marker <- FetchData(integrated_24hpi, 
-                                 
-                                 vars= c("chikrnalvl", "VIM", "COL3A1", 
+# Marker genes
+genelist_bins24_marker <- FetchData(integrated_24hpi, 
+                                 vars= c("chikv_bins", "VIM", "COL3A1", 
                                          "ADGRE1", "CD14", "FCGR3A", "GAPDH", 
                                          "MAPK1", "MXRA8", "FHL1", "PHB", 
                                          "AXL", "DHX9", "SAMHD1", "FURIN"))
 
-genelist_avg_marker <- genelist_all_marker %>% 
-  group_by(chikrnalvl) %>%
+genelist_avg_marker_bins24 <- genelist_bins24_marker %>% 
+  group_by(chikv_bins) %>%
   summarise(VIM = mean(VIM), COL3A1 = mean(COL3A1),
             EMR1 = mean(ADGRE1), CD14 = mean(CD14), 
-            FCGR3A = mean(FCGR3A), GAPDH = mean(GAPDH), 
+            GAPDH = mean(GAPDH), 
             MAPK1 = mean(MAPK1), MXRA8 = mean(MXRA8), 
             FHL1 = mean(FHL1), PHB = mean(PHB),
             AXL = mean(AXL), DHX9 = mean(DHX9),
@@ -309,36 +347,34 @@ genelist_avg_marker <- genelist_all_marker %>%
             FURIN = mean(FURIN))
 
 
-write.csv2(genelist_avg_marker, file = "genelist_marker_24.csv")
+write.csv2(genelist_avg_marker_bins24, file = "genelist_marker_bins24.csv")
 
 
-# DEG testing of bystander cells vs low/high CHIKV cells and between low and
-# high CHIKV cells
+# DEG testing for bins
 
-#no_chikv vs low_chikv
-no_low_chikv <- FindMarkers(integrated_24hpi,
-                            ident.1 = "low_chikv",
-                            ident.2 = "no_chikv")
+# bystander vs bin_low
+Idents(integrated_24hpi) <- "chikv_bins"
+bystander_binlow <- FindMarkers(integrated_24hpi,
+                            ident.1 = "bin_low", 
+                            ident.2 = "bystander")
 
-head(no_low_chikv)
-write.csv2(no_low_chikv, file = "Data output/no_vs_low_chikv24.csv")
+write.csv2(bystander_binlow, file = "Data output/bystander_binlow24.csv")
 
-#no_chikv vs high_chikv
-no_high_chikv <- FindMarkers(integrated_24hpi,
-                             ident.1 = "high_chikv", 
-                             ident.2 = "no_chikv")
+# bystander vs bin_high
+Idents(integrated_24hpi) <- "chikv_bins"
+bystander_binhigh <- FindMarkers(integrated_24hpi,
+                            ident.1 = "bin_high", 
+                            ident.2 = "bystander")
 
-head(no_high_chikv)
-write.csv2(no_high_chikv, file = "Data output/no_vs_high_chikv24.csv")
+write.csv2(bystander_binhigh, file = "Data output/bystander_binhigh24.csv")
 
-# low_chikv vs high_chikv
-low_high_chikv <- FindMarkers(integrated_24hpi,
-                              ident.1 = "high_chikv", 
-                              ident.2 = "low_chikv")
+# binlow vs bin_high
+Idents(integrated_24hpi) <- "chikv_bins"
+binlow_binhigh <- FindMarkers(integrated_24hpi,
+                            ident.1 = "bin_high", 
+                            ident.2 = "bin_low")
 
-head(low_high_chikv)
-write.csv2(low_high_chikv, file = "Data output/low_vs_high_chikv24.csv")
-
+write.csv2(binlow_binhigh, file = "Data output/binlow_binhigh24.csv")
 
 
 # Fetch expression for all genes from Interferon module score for 
