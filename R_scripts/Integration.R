@@ -15,6 +15,8 @@ library(rcartocolor)
 #### Load all required RDS objects. Here, I have used replicate 2 and 4 from
 #### different runs, so I name them by replicate, timepoint, and MOI
 
+#### Integration was performed similarly for all mock samples
+
 # Adding metadata for infection status to the samples
 # Infection status (moi*timepoint)
 rep2_mock_6$infection <- 'mock_6'
@@ -168,7 +170,7 @@ integrated_6hpi_clus <- FindNeighbors(integrated_6hpi_clus,
                                       reduction = "pca", dims = 1:20)
 
 integrated_6hpi_clus <- FindClusters(integrated_6hpi_clus, 
-                                     resolution = 0.5) # Resolution for 24 hpi: 0.8
+                                     resolution = 0.5) # Resolution for 24 hpi: 0.8, for mock samples: 0.5
 
 # UMAP colored by infection status
 Idents(integrated_6hpi_clus) <- "infection"
