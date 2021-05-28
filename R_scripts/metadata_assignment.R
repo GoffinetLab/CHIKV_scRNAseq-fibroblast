@@ -14,7 +14,7 @@ library(rcartocolor)
 
 ####################### 24 hpi ###########################
 
-# Adding Metadata for CHIKV RNA level
+## Adding Metadata for CHIKV RNA level
 
 # creating subsets for infection status and low/high CHIKV RNA combined
 
@@ -92,8 +92,42 @@ VlnPlot(integrated_24hpi, features = "CHIKV-sp", split.by = "chikrnalvl",
         pt.size = 0) + geom_hline(yintercept = 3.5)
 
 
+## Add metadata for selected low and high bins
 
-# Add interferon module score
+# Creating metadata for bins 
+
+Idents(integrated_24hpi) <- "moi"
+
+bin_low <- WhichCells(object = integrated_24hpi, 
+                         expression = `CHIKV-sp` >= 2.639 & `CHIKV-sp` <=3.850)
+bin_high <- WhichCells(object = integrated_24hpi, 
+                         expression = `CHIKV-sp` >= 7.329)
+
+bystander <- WhichCells(object = integrated_24hpi, 
+                       expression = `CHIKV-sp` == 0, 
+                       idents = c("moi01", "moi10", "moi0_1", "moi0_01"))
+
+mock <- WhichCells(object = integrated_24hpi, 
+                   expression = `CHIKV-sp` == 0, idents = "mock")
+
+# calculating the number of cells in each subset
+length(bin_low)
+length(bin_high)
+length(bystander)
+length(mock)
+
+# creating metadata for each cell with the bins and bystander cells
+
+integrated_24hpi[["chikv_bins"]] <- ifelse(rownames(integrated_24hpi@meta.data) %in% 
+                                              bin_high, "bin_high",
+ifelse(rownames(integrated_24hpi@meta.data) %in% bin_low, "bin_low",
+ifelse(rownames(integrated_24hpi@meta.data) %in% bystander, "bystander",
+ifelse(rownames(integrated_24hpi@meta.data) %in% mock, "mock",
+       "outside_bins"))))
+
+
+
+## Add interferon module score
 # Score cells depending on their expression of the Reactome IFN signalling genes
 
 DefaultAssay(integrated_24hpi) <- "SCT"
@@ -126,7 +160,7 @@ saveRDS(integrated_24hpi, file = "integrated_24hpi.RDS")
 ######################## 6 hpi #######################
 
 
-# Adding Metadata for CHIKV RNA level
+## Adding Metadata for CHIKV RNA level
 
 # creating subsets for infection status and low/high CHIKV RNA combined
 # Adding Metadata for CHIKV RNA level
@@ -206,6 +240,40 @@ VlnPlot(integrated_6hpi, features = "CHIKV-sp",
         cols = c("#f4a261", "#f4a261", "#2a9d8f", "#2a9d8f", "#2a9d8f",
                  "#2a9d8f", "#264653", "#264653", "#264653", "#264653"),
         pt.size = 0) + geom_hline(yintercept = 4)
+
+
+## Adding metadata for selected high and low bins
+
+# Creating metadata for bins 
+
+Idents(integrated_6hpi) <- "moi"
+
+bin_low <- WhichCells(object = integrated_6hpi, 
+                         expression = `CHIKV-sp` >= 1.945 & `CHIKV-sp` <=2.639)
+bin_high <- WhichCells(object = integrated_6hpi, 
+                         expression = `CHIKV-sp` >= 6.922)
+
+bystander <- WhichCells(object = integrated_6hpi, 
+                       expression = `CHIKV-sp` == 0, 
+                       idents = c("moi01", "moi10", "moi0_1", "moi0_01"))
+
+mock <- WhichCells(object = integrated_6hpi, 
+                   expression = `CHIKV-sp` == 0, idents = "mock")
+
+# calculating the number of cells in each subset
+length(bin_low)
+length(bin_high)
+length(bystander)
+length(mock)
+
+# creating metadata for each cell with the bins and bystander cells
+
+integrated_6hpi[["chikv_bins"]] <- ifelse(rownames(integrated_6hpi@meta.data) %in% 
+                                              bin_high, "bin_high",
+ifelse(rownames(integrated_6hpi@meta.data) %in% bin_low, "bin_low",
+ifelse(rownames(integrated_6hpi@meta.data) %in% bystander, "bystander",
+ifelse(rownames(integrated_6hpi@meta.data) %in% mock, "mock",
+       "outside_bins"))))
 
 
 # Add interferon module score
