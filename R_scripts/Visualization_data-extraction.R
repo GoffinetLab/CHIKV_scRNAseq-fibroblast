@@ -36,42 +36,22 @@ cols2_single <- newcol_single(ncols) #apply the function to get 100 colours
 
 ######### UMAPS ###########
 
-# UMAP colored by cluster
-integrated_24hpi$SCT_snn_res.0.8 <- factor(x = integrated_24hpi$SCT_snn_res.0.8,
-                                           levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12))
+# UMAP colored by sample
+# UMAP colored by MOI
+integrated_24hpi$infection <- factor(x = integrated_24hpi$infection,
+                               levels = c("mock_24", "moi0_01_24", "moi0_1_24",
+                                          "moi01_24", "moi10_24"))
 
-Idents(integrated_24hpi) <- "SCT_snn_res.0.8"
+Idents(integrated_24hpi) <- "infection"
 
-integrated_24hpi_umap_cluster <-DimPlot(integrated_24hpi,
-                                        reduction = "umap", label = FALSE,
-                                        pt.size = 0.5, label.size = 6, 
-                                        split.by = "timepoint",
-                                        cols = c("#51574a", "#447c69", "#74c493",
-                                                 "#8e8c6d", "#e4bf80", "#e9d78e",
-                                                 "#e2975d", "#f19670", "#e16552",
-                                                 "#c94a53", "#be5168", "#a34974",
-                                                 "#993767", "#65387d", "#4e2472",
-                                                 "#9163b6", "#e279a3", "#e0598b",
-                                                 "#7c9fb0", "#5698c4", "#9abf88")
+integrated_24hpi_umap_moi <-DimPlot(integrated_24hpi,
+                                      reduction = "umap", label = FALSE,
+                                      pt.size = 0.5, label.size = 6, 
+                                      cols = c("#888888","#018181", "#B5C8A9",
+                                               "#EDBB89", "#CA562D")
 ) + NoAxes() + theme(legend.text=element_text(size=16))
 
-integrated_24hpi_umap_cluster
-
-
-# UMAP colored by replicate
-Idents(integrated_24hpi) <- "replicate"
-
-integrated_24hpi_umap_replicate <-DimPlot(integrated_24hpi,
-                                          reduction = "umap", label = FALSE,
-                                          pt.size = 0.5, label.size = 6, 
-                                          cols = c("#D25B31", "#08333A")
-) + NoAxes() + theme(legend.text=element_text(size=16))
-
-integrated_24hpi_umap_replicate
-
-ggsave("./UMAPs/integrated_24hpi_replicate.png", 
-       plot = integrated_24hpi_umap_replicate, 
-       width = 16, height = 15, units = "cm")
+integrated_24hpi_umap_moi
 
 
 # UMAP grid of CHIKV expression
@@ -222,9 +202,6 @@ VlnPlot_chikv_24 <- VlnPlot(integrated_24hpi, features = "CHIKV-sp",
 
 VlnPlot_chikv_24
 
-ggsave("./VlnPlots/Vln_chikv_24.svg", 
-       plot = VlnPlot_chikv_24, 
-       width = 15, height = 15, units = "cm", dpi = 300)
 
 #VlnPlot for IFN module score by MOI
 Idents(integrated_24hpi) <- "moi"
@@ -433,12 +410,8 @@ write.csv2(genelist_all_ifnsig24, file = "Data output/genelist_all_ifnsig24.csv"
 
 # Calculate amount of CHIKV genes in each cluster
 integrated_24hpi[["percent.chikv"]] <- PercentageFeatureSet(integrated_24hpi, 
-                                                            pattern = "^MT-")
+                                                            pattern = "^CHIKV-")
 
-df <- FetchData(integrated_24hpi, vars = c("percent.chikv", "seurat_clusters", "moi"))
-df_sum <- df %>%
-  group_by(moi, seurat_clusters) %>%
-  summarise(mean_perc_mt = mean(percent.chikv), sd_perc_mt = sd(percent.chikv))
-df_sum
+df <- FetchData(integrated_24hpi, vars = c("percent.chikv", "moi"))
 
-write.csv2(df_sum, file = "Data output/percentchikv_percluster_24hpi.csv")
+write.csv2(df, file = "Data output/percentchikv_percluster_24hpi.csv")
