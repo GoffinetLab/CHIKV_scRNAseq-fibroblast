@@ -326,6 +326,26 @@ genelist_avg_marker_bins24 <- genelist_bins24_marker %>%
 
 write.csv2(genelist_avg_marker_bins24, file = "genelist_marker_bins24.csv")
 
+# RA genes
+genelist_bins24_ra <- FetchData(integrated_24hpi, 
+                                 vars= c("chikv_bins", "CXCL5", "CXCL8", 
+                                         "ANPEP", "CCL5", "MMP3", "MMP9", 
+                                         "MMP14", "ADAMTS5", "FGF2", "PDPN", 
+                                         "NGF", "FAP"))
+
+genelist_avg_ra_bins24 <- genelist_bins24_ra %>% 
+  group_by(chikv_bins) %>%
+  summarise(CXCL5 = mean(CXCL5), IL8 = mean(CXCL8),
+            CD13 = mean(ANPEP), RANTES = mean(CCL5), 
+            MMP3 = mean(MMP3), 
+            MMP9 = mean(MMP9), MMP14 = mean(MMP14), 
+            ADAMTS5 = mean(ADAMTS5), FGF2 = mean(FGF2),
+            PDPN = mean(PDPN), NGF = mean(NGF),
+            FAP = mean(FAP))
+
+
+write.csv2(genelist_avg_ra_bins24, file = "genelist_RA_bins24.csv")
+
 
 # DEG testing for bins
 
